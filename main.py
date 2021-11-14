@@ -22,6 +22,7 @@ if __name__ == '__main__':
         colorized_depth = colorizer.colorize(depth_frame)
         depth_image = np.asanyarray(colorized_depth.get_data())
         cv2.imshow('Depth Stream', depth_image)
+        cv2.imshow("color stream", color_image)
         c = cv2.waitKey(1)
         if c == 13:
             cv2.destroyAllWindows()
