@@ -61,7 +61,7 @@ class Visualization:
             intrinsics.width, intrinsics.height, intrinsics.fx, intrinsics.fy, intrinsics.ppx, intrinsics.ppy)
         img_color = o3d.geometry.Image(color_image)
         img_depth = o3d.geometry.Image(depth_image)
-        rgbd = create_rgbd_image_from_color_and_depth(img_color, img_depth, depth_trunc=9.0, convert_rgb_to_intensity=False)
+        rgbd = create_rgbd_image_from_color_and_depth(img_color, img_depth, depth_scale=500, depth_trunc=9.0, convert_rgb_to_intensity=False)
         self.pointcloud = create_point_cloud_from_rgbd_image(rgbd, pinhole_camera_intrinsic)
 
     def update_geometry(self):
@@ -69,10 +69,13 @@ class Visualization:
         self.visualizer.poll_events()
         self.visualizer.update_renderer()
 
-    def creat_and_udate(self, color_image, depth_image, intrinsics):
+    def creat_and_udpate(self, color_image, depth_image, intrinsics):
         self.create_pointcloud(color_image, depth_image, intrinsics)
         self.update_geometry()
         self.pointcloud.clear()
+
+    def draw_geometry(self):
+        o3d.visualization.draw_geometries([self.pointcloud])
 
     def closeWindows(self):
         self.visualizer.close()
@@ -89,7 +92,9 @@ if __name__ == '__main__':
         colorized_depth = pipe.get_colorized_depth_image()
         intrinsics = pipe.get_parameters()
         ##
-        vis.creat_and_udate(color, depth, intrinsics)
+        vis.create_pointcloud(color, depth, intrinsics)
+        vis.draw_geometry()
+        #vis.creat_and_update(color, depth, intrinsics)
         ##
         cv2.imshow("color stream", colorized_depth)
         c = cv2.waitKey(1)
